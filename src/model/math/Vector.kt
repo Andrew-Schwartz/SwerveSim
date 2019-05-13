@@ -38,21 +38,25 @@ data class Vector(val x: Double, val y: Double) {
 
     fun bound(max: Double): Vector = max.absoluteValue.let { if (magnitude > max) normalize(max) else this }
 
-    fun boundEach(max: Double): Vector = Vector(x.bound(max), y.bound(max))
+    fun boundEach(max: Double): Vector = map { it.bound(max) }
 
-    infix fun epsilonEquals(other: Vector) = x epsilonEquals other.x && y epsilonEquals other.y
+    infix fun epsilonEquals(other: Vector): Boolean = both(other, Double::epsilonEquals)
+//    infix fun epsilonEquals(other: Vector) = x epsilonEquals other.x && y epsilonEquals other.y
 
-    operator fun plus(other: Vector): Vector = Vector(x + other.x, y + other.y)
+    operator fun plus(other: Vector): Vector = map(other, Double::plus)
+//    operator fun plus(other: Vector): Vector = Vector(x + other.x, y + other.y)
 
-    operator fun unaryMinus(): Vector = Vector(-x, -y)
-    operator fun minus(other: Vector): Vector = Vector(x - other.x, y - other.y)
+    operator fun unaryMinus(): Vector = map { -it }
+//    operator fun unaryMinus(): Vector = Vector(-x, -y)
 
-    operator fun times(scalar: Double): Vector = Vector(x * scalar, y * scalar)
+    operator fun minus(other: Vector): Vector = map(other, Double::minus)
+//    operator fun minus(other: Vector): Vector = Vector(x - other.x, y - other.y)
 
-    operator fun div(scalar: Double): Vector = Vector(x / scalar, y / scalar)
+    operator fun times(scalar: Double): Vector = map { it * scalar }
+//    operator fun times(scalar: Double): Vector = Vector(x * scalar, y * scalar)
+
+    operator fun div(scalar: Double): Vector = map { it / scalar }
+//    operator fun div(scalar: Double): Vector = Vector(x / scalar, y / scalar)
 
     fun dot(other: Vector): Double = x * other.x + y * other.y
-
-    fun drawable(center: Vector): DrawableVector = DrawableVector(center, this)
-    fun drawable(x: Double, y: Double): DrawableVector = drawable(Vector(x, y))
 }

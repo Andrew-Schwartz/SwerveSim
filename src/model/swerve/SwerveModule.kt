@@ -7,7 +7,12 @@ import processingExt.Drawable
 import processingExt.line
 
 class SwerveModule(var x: Double, var y: Double) : Drawable {
-    val center: Vector get() = Vector(x, y)
+    var center: Vector
+        get() = Vector(x, y)
+        set(value) {
+            x = value.x
+            y = value.y
+        }
 
     var heading: Double = 0.0
         get() = field + Swerve.heading
@@ -17,7 +22,6 @@ class SwerveModule(var x: Double, var y: Double) : Drawable {
             output = Vector(0.0, -speed).rotate(heading)
             field = speed
 //            val (newX, newY) = Vector(speed, 0.0).rotate(heading - 90) / 1.0
-//            println("nx: $newX, ny: $newY")
 //            var (x, y) = output
 //            if (newX epsilonEquals 0.0) {
 //                x *= 0.9

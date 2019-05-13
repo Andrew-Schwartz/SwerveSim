@@ -28,16 +28,16 @@ object HUD : Drawable {
             text("X =", 50F, 300F)
             text(Swerve.x.toFloat(), 105F, 300F)
             text("Y =", 50F, 350F)
-            text(Swerve.y.toFloat(), 105F, 350F)
+            text(-Swerve.y.toFloat(), 105F, 350F)
             text("θ = ", 50F, 400F)
             text(Swerve.heading.toFloat(), 105F, 400F)
 
             text("dX =", 50F, 475F)
             text(Swerve.linearMomentum.x.toFloat(), 125F, 475F)
             text("dY =", 50F, 525F)
-            text(Swerve.linearMomentum.y.toFloat(), 125F, 525F)
+            text(-Swerve.linearMomentum.y.toFloat(), 125F, 525F)
             text("dθ = ", 50F, 575F)
-            text(Swerve.angularSpeed.toFloat(), 125F, 575F)
+            text(Swerve.angularMomentum.toFloat(), 125F, 575F)
         }
     }
 }

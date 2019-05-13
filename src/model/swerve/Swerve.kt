@@ -1,8 +1,7 @@
 package model.swerve
 
 import Keys
-import model.math.DrawableVector
-import model.math.Vector
+import model.math.*
 import processing.core.PApplet
 import processingExt.Drawable
 import processingExt.line
@@ -18,26 +17,22 @@ object Swerve : Drawable {
     var heading: Double = 0.0
 
     var linearMomentum = Vector(0, 0)
-    var angularSpeed = 0.0
+    var angularMomentum = 0.0
 
     val momentumIndicator: DrawableVector get() = linearMomentum.times(20.0).drawable(x, y)
 
     val moduleOffsets: List<Vector>
         get() = listOf(
-            -s / 2, -s / 2,
-            s / 2, -s / 2,
-            s / 2, s / 2,
-            -s / 2, s / 2
+            -w / 2, -l / 2,
+            w / 2, -l / 2,
+            w / 2, l / 2,
+            -w / 2, l / 2
         ).chunked(2, ::Vector)
             .map { it.rotate(heading) }
 
     val modules = moduleOffsets
+        .map { it + center }
         .map { SwerveModule(it.x, it.y) }
-        .map {
-            it.x += x
-            it.y += y
-            it
-        }
 
     override fun draw(applet: PApplet) {
         for ((i, module) in modules.withIndex()) {
@@ -58,34 +53,12 @@ object Swerve : Drawable {
     }
 
     fun updateModules() {
-//        var moving = false
-//
-//        if (Keys.rotationSpeed != 0) {
-//            for ((i, module) in modules.withIndex()) {
-//                module.heading = (module.center - center).angle + 90
-//                module.speed = Keys.rotationSpeed.toDouble()
-//            }
-//            moving = true
-//        }
-//
-//        if (Keys.direction != Vector(0, 0)) {
-//            for (it in modules) {
-//                it.heading = Keys.direction.angle
-//                it.speed = Keys.direction.magnitude
-//            }
-//            moving = true
-//        }
-//
-//        if (!moving)
-//            for (it in modules)
-//                it.speed = 0.0
-
         val (strafe, forward) = Keys.direction.rotate(heading)
 
-        val a = strafe - Keys.rotationSpeed * sComponent
-        val b = strafe + Keys.rotationSpeed * sComponent
-        val c = forward - Keys.rotationSpeed * sComponent
-        val d = forward + Keys.rotationSpeed * sComponent
+        val a = strafe - Keys.rotationSpeed * lComponent
+        val b = strafe + Keys.rotationSpeed * lComponent
+        val c = forward - Keys.rotationSpeed * wComponent
+        val d = forward + Keys.rotationSpeed * wComponent
 
         // wheel speed
         var ws = listOf(
@@ -107,26 +80,44 @@ object Swerve : Drawable {
         if (maxSpeed > 1.0)
             ws = ws.map { it / maxSpeed }
 
+        val moving = !wa.all { it epsilonEquals 0.0 }
+
         for ((i, module) in modules.withIndex()) {
-            module.heading = wa[i]
+            if (moving) module.heading = wa[i]
             module.speed = ws[i]
         }
     }
 
     fun move() {
-        linearMomentum = modules.map { it.output }.reduce { acc, vector -> acc + vector }
-        angularSpeed = modules.map {
+        val linearForce = modules.map { it.output }.reduce { acc, vector -> acc + vector }
+        val angularForce = modules.map {
             val e1 = Vector(x, y) - it.center
             val e2 = it.center - (it.center + it.output)
             val clockWise = e1.x * e2.y - e1.y * e2.x >= 0
             if (clockWise) it.output.magnitude else -it.output.magnitude
         }.sum()
 
+        linearMomentum = linearForce.map(linearMomentum) { f, m ->
+            if (f epsilonEquals 0.0)
+                m * 0.9
+            else
+                m + f / 10.0
+        }
+        linearMomentum = linearMomentum.bound(8.0)
+
+        angularMomentum = if (angularForce epsilonEquals 0.0)
+            angularMomentum * 0.9
+        else
+            angularMomentum + angularForce / 10.0
+        angularMomentum = angularMomentum.bound(4.0)
+
         x += linearMomentum.x
         y += linearMomentum.y
-        heading += angularSpeed
+        heading += angularMomentum
     }
 
-    private const val s = 150.0
-    private val sComponent = s / hypot(s, s)
+    private const val w = 150.0
+    private const val l = 160.0
+    private val wComponent = w / hypot(w, l)
+    private val lComponent = l / hypot(w, l)
 }
