@@ -13,8 +13,6 @@ object Sketch : PApplet() {
     }
 
     override fun draw() {
-//        frameRate(5F)
-
         background(255)
         HUD.draw(this)
         Swerve.updateModules()

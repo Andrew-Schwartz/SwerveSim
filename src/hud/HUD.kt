@@ -1,6 +1,7 @@
 package hud
 
 import Sketch.h
+import model.math.round
 import model.swerve.Swerve
 import processing.core.PApplet
 import processingExt.Drawable
@@ -20,24 +21,22 @@ object HUD : Drawable {
 
     override fun draw(applet: PApplet) {
         with(applet) {
+            textSize(30F)
             fill(0)
             noStroke()
             rect(dividerX - 2, 0, 2, h)
             indicators.forEach { it.draw(this) }
 
-            text("X =", 50F, 300F)
-            text(Swerve.x.toFloat(), 105F, 300F)
-            text("Y =", 50F, 350F)
-            text(-Swerve.y.toFloat(), 105F, 350F)
-            text("θ = ", 50F, 400F)
-            text(Swerve.heading.toFloat(), 105F, 400F)
+            text("X = ${Swerve.x.round(2)}", 50F, 300F)
+            text("Y = ${-Swerve.y.round(2)}", 50F, 350F)
+            text("θ = ${Swerve.heading.round(2)}", 50F, 400F)
 
-            text("dX =", 50F, 475F)
-            text(Swerve.linearMomentum.x.toFloat(), 125F, 475F)
-            text("dY =", 50F, 525F)
-            text(-Swerve.linearMomentum.y.toFloat(), 125F, 525F)
-            text("dθ = ", 50F, 575F)
-            text(Swerve.angularMomentum.toFloat(), 125F, 575F)
+            text("dX = ${Swerve.linearMomentum.x.round(2)}", 50F, 475F)
+            text("dY = ${-Swerve.linearMomentum.y.round(2)}", 50F, 525F)
+            text("dθ = ${Swerve.angularMomentum.round(2)}", 50F, 575F)
+
+            textSize(15F)
+            text("fps = ${frameRate.toInt()}", 50F, 750F)
         }
     }
 }

@@ -9,3 +9,8 @@ fun Double.bound(max: Double): Double = max.absoluteValue.let { max(-it, min(it,
 infix fun Double.epsilonEquals(other: Double): Boolean = abs(this - other) < 1E-12
 
 fun Double.sqrt(): Double = sqrt(this)
+
+fun Double.round(n: Int): Double {
+    val factor = 10.0.pow(n)
+    return (this * factor).toInt() / factor
+}
