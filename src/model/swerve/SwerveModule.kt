@@ -5,6 +5,10 @@ import model.math.Vector
 import processing.core.PApplet
 import processingExt.Drawable
 import processingExt.line
+import java.lang.Math.toRadians
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.sin
 
 class SwerveModule(var x: Double, var y: Double) : Drawable {
     var center: Vector
@@ -16,28 +20,24 @@ class SwerveModule(var x: Double, var y: Double) : Drawable {
 
     var heading: Double = 0.0
         get() = field + Swerve.heading
+        private set
 
     var speed: Double = 0.0
-        set(speed) {
-            output = Vector(0.0, -speed).rotate(heading)
-            field = speed
-//            val (newX, newY) = Vector(speed, 0.0).rotate(heading - 90) / 1.0
-//            var (x, y) = output
-//            if (newX epsilonEquals 0.0) {
-//                x *= 0.9
-//            } else {
-//                x += newX
-//            }
-//            if (newY epsilonEquals 0.0) {
-//                y *= 0.9
-//            } else {
-//                y += newY
-//            }
-//            output = Vector(x, y).bound(0.7)
-//            field = speed
-        }
+        private set
+
+    fun set(heading: Double, speed: Double) {
+        this.heading = heading
+        this.speed = speed
+        output = Vector(0.0, -speed).rotate(this.heading)
+    }
 
     var output: Vector = Vector.ZERO
+
+    fun frictionForce(heading: Double): Double {
+        val forwardFriction = muForward * sin(toRadians(this.heading - heading)).absoluteValue
+        val strafeFriction = muStrafe * cos(toRadians(this.heading - heading)).absoluteValue
+        return forwardFriction + strafeFriction
+    }
 
     override fun draw(applet: PApplet) {
         with(applet) {
@@ -49,7 +49,7 @@ class SwerveModule(var x: Double, var y: Double) : Drawable {
                 w / 2, -h / 2,
                 w / 2, h / 2,
                 -w / 2, h / 2
-            ).chunked(2) { Vector(it[0], it[1]) }
+            ).chunked(2) { Vector(it) }
                 .map { center + it }
                 .map { it.rotateAround(center, heading) }
             line(points[0], points[1])
@@ -61,7 +61,9 @@ class SwerveModule(var x: Double, var y: Double) : Drawable {
     }
 
     private companion object {
-        const val w = 15F
+        const val w = 5F
         const val h = 3 * w
+        const val muForward = 0.05
+        const val muStrafe = 0.05 // TODO tune these
     }
 }

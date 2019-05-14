@@ -36,27 +36,19 @@ data class Vector(val x: Double, val y: Double) {
         return Vector(center.x, center.y) + zeroed.rotate(degrees)
     }
 
-    fun bound(max: Double): Vector = max.absoluteValue.let { if (magnitude > max) normalize(max) else this }
+    fun bound(max: Double): Vector = abs(max).let { if (magnitude > max) normalize(max) else this }
 
     fun boundEach(max: Double): Vector = map { it.bound(max) }
 
-    infix fun epsilonEquals(other: Vector): Boolean = both(other, Double::epsilonEquals)
-//    infix fun epsilonEquals(other: Vector) = x epsilonEquals other.x && y epsilonEquals other.y
-
     operator fun plus(other: Vector): Vector = map(other, Double::plus)
-//    operator fun plus(other: Vector): Vector = Vector(x + other.x, y + other.y)
 
     operator fun unaryMinus(): Vector = map { -it }
-//    operator fun unaryMinus(): Vector = Vector(-x, -y)
 
     operator fun minus(other: Vector): Vector = map(other, Double::minus)
-//    operator fun minus(other: Vector): Vector = Vector(x - other.x, y - other.y)
 
     operator fun times(scalar: Double): Vector = map { it * scalar }
-//    operator fun times(scalar: Double): Vector = Vector(x * scalar, y * scalar)
 
     operator fun div(scalar: Double): Vector = map { it / scalar }
-//    operator fun div(scalar: Double): Vector = Vector(x / scalar, y / scalar)
 
-    fun dot(other: Vector): Double = x * other.x + y * other.y
+    infix fun dot(other: Vector): Double = x * other.x + y * other.y
 }
