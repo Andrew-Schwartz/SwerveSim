@@ -1,11 +1,11 @@
 package hud
 
-import Keys
+import Input
 import processing.core.PApplet
 import processingExt.*
 
 class Indicator(val display: String, val x: Int, val y: Int, val targetKey: NamedKey) : Drawable {
-    private val keyIsPressed: Boolean get() = targetKey in Keys.pressedKeys
+    private val keyIsPressed: Boolean get() = targetKey in Input.pressedKeys
 
     override fun draw(applet: PApplet) {
         with(applet) {

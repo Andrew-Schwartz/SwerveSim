@@ -21,10 +21,10 @@ object Sketch : PApplet() {
     }
 
     override fun keyPressed(event: KeyEvent) {
-        Keys += event.named()
+        Input += event.named()
     }
 
     override fun keyReleased(event: KeyEvent) {
-        Keys -= event.named()
+        Input -= event.named()
     }
 }

@@ -1,11 +1,11 @@
 package model.swerve
 
-import Keys
+import Input
 import Sketch
 import hud.HUD
 import model.math.Vector
+import model.math.drawable
 import model.math.epsilonEquals
-import model.math.map
 import model.math.sum
 import processing.core.PApplet
 import processingExt.Drawable
@@ -48,7 +48,7 @@ object Swerve : Drawable {
             module.y = y + moduleOffsets[i].y
             module.draw(applet)
         }
-//        linearMomentum.times(20.0).drawable(center).draw(applet)
+        linearMomentum.times(20.0).drawable(center).draw(applet)
         with(applet) {
             noFill()
             stroke(0)
@@ -62,15 +62,15 @@ object Swerve : Drawable {
 
     fun updateModules() {
         val (strafe, forward) = if (fieldCentric)
-            Keys.direction.rotate(heading)
+            Input.direction.rotate(heading)
         else
-            Keys.direction
+            Input.direction
 
         // geometric stuff
-        val a = strafe - Keys.rotationSpeed * lComponent
-        val b = strafe + Keys.rotationSpeed * lComponent
-        val c = forward - Keys.rotationSpeed * wComponent
-        val d = forward + Keys.rotationSpeed * wComponent
+        val a = strafe - Input.rotationSpeed * lComponent
+        val b = strafe + Input.rotationSpeed * lComponent
+        val c = forward - Input.rotationSpeed * wComponent
+        val d = forward + Input.rotationSpeed * wComponent
 
         // wheel speed
         var ws = listOf(
@@ -108,17 +108,20 @@ object Swerve : Drawable {
     fun move() {
         val linearForce = modules.map { it.output }.sum()
         val angularForce = modules.map {
-            it.output.bound(0.5) dot Vector(1.0, 0.0).rotate((it.center - center).angle + 90)
+            it.output/*.bound(0.5)*/ dot Vector(1.0, 0.0).rotate((it.center - center).angle + 90)
         }.sum()
 
-        linearMomentum = linearForce.map(linearMomentum) { f, m -> m + f / 3.0 }
-        linearMomentum *= 1.0 - modules.map { it.frictionForce(linearMomentum.angle) }.average()
+        linearMomentum = linearForce
+        angularMomentum = angularForce
 
-        angularMomentum = if (angularForce epsilonEquals 0.0)
-            angularMomentum * 0.9
-        else
-            angularMomentum + angularForce / 3.0
-        angularMomentum *= 1.0 - modules.map { it.frictionForce((it.center - center).angle + 90) }.average()
+//        linearMomentum = linearForce.map(linearMomentum) { f, m -> m + f / 10.0 }
+//        linearMomentum *= 1.0 - modules.map { it.frictionForce(linearMomentum.angle) }.average()
+
+//        angularMomentum = if (angularForce epsilonEquals 0.0)
+//            angularMomentum * 0.9
+//        else
+//            angularMomentum + angularForce / 10.0
+//        angularMomentum *= 1.0 - modules.map { it.frictionForce((it.center - center).angle + 90) }.average()
 
         x += linearMomentum.x
         y += linearMomentum.y

@@ -1,7 +1,7 @@
 import model.math.Vector
 import processingExt.NamedKey
 
-object Keys {
+object Input {
     val pressedKeys: MutableSet<NamedKey> = mutableSetOf()
 
     val rotationSpeed: Int
