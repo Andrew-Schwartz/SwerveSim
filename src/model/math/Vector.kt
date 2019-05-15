@@ -50,8 +50,10 @@ data class Vector(val x: Double, val y: Double) {
     operator fun minus(other: Vector): Vector = map(other, Double::minus)
 
     operator fun times(scalar: Double): Vector = map { it * scalar }
+//    operator fun times(each: Vector): Vector = map(each, Double::times)
 
     operator fun div(scalar: Double): Vector = map { it / scalar }
+//    operator fun div(each: Vector): Vector = map(each, Double::div)
 
     infix fun dot(other: Vector): Double = x * other.x + y * other.y
 }

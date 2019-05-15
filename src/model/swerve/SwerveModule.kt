@@ -34,8 +34,6 @@ class SwerveModule(var x: Double, var y: Double) : Drawable {
         get() = output.magnitude
 
     fun set(heading: Double, speed: Double) {
-//        if (!(this.speed epsilonEquals 0.0)) oldHeading = this.heading
-
         val h = if (this.speed epsilonEquals 0.0) {
             oldHeading
         } else {
@@ -50,7 +48,7 @@ class SwerveModule(var x: Double, var y: Double) : Drawable {
 
         output = (-Vector.j * newSpeed)
             .rotate(h)
-            .bound(1.0)
+            .bound(maxOutput)
     }
 
     fun frictionForce(heading: Double): Double {
@@ -76,14 +74,15 @@ class SwerveModule(var x: Double, var y: Double) : Drawable {
             line(points[1], points[2])
             line(points[2], points[3])
             line(points[3], points[0])
+            DrawableVector(x, y, output * 40.0 / maxOutput).draw(this)
         }
-        DrawableVector(x, y, output * 40.0).draw(applet)
     }
 
-    private companion object {
-        const val w = 5F
-        const val h = 15F
-        const val muForward = 0.01
-        const val muStrafe = 0.1
+    companion object {
+        private const val w = 5F
+        private const val h = 15F
+        private const val muForward = 0.00/*1*/
+        private const val muStrafe = 0.1
+        const val maxOutput = 3.0
     }
 }

@@ -7,6 +7,7 @@ import model.math.Vector
 import model.math.drawable
 import model.math.epsilonEquals
 import model.math.sum
+import model.swerve.SwerveModule.Companion.maxOutput
 import processing.core.PApplet
 import processingExt.Drawable
 import processingExt.line
@@ -48,7 +49,7 @@ object Swerve : Drawable {
             module.y = y + moduleOffsets[i].y
             module.draw(applet)
         }
-        linearMomentum.times(20.0).drawable(center).draw(applet)
+        linearMomentum.times(20.0 / maxOutput).drawable(center).draw(applet)
         with(applet) {
             noFill()
             stroke(0)
@@ -78,7 +79,7 @@ object Swerve : Drawable {
             hypot(b, c),
             hypot(a, c),
             hypot(a, d)
-        )
+        ).map { it * maxOutput }
 
         // wheel angle
         val wa = listOf(
@@ -89,8 +90,8 @@ object Swerve : Drawable {
         )
 
         val maxSpeed = ws.max()!!
-        if (maxSpeed > 1.0)
-            ws = ws.map { it / maxSpeed }
+        if (maxSpeed > maxOutput)
+            ws = ws.map { it * maxOutput / maxSpeed }
 
         val moving = !ws.all { it epsilonEquals 0.0 }
 
@@ -115,7 +116,8 @@ object Swerve : Drawable {
         angularMomentum = angularForce
 
 //        linearMomentum = linearForce.map(linearMomentum) { f, m -> m + f / 10.0 }
-//        linearMomentum *= 1.0 - modules.map { it.frictionForce(linearMomentum.angle) }.average()
+        linearMomentum *= 1.0 - modules.map { it.frictionForce(linearMomentum.angle) }.average()
+//        linearMomentum = linearMomentum
 
 //        angularMomentum = if (angularForce epsilonEquals 0.0)
 //            angularMomentum * 0.9
