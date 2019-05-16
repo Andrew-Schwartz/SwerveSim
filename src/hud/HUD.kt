@@ -31,9 +31,9 @@ object HUD : Drawable {
             text("Y = ${-Swerve.y.round(2)}", 50F, 350F)
             text("θ = ${Swerve.heading.round(2)}", 50F, 400F)
 
-            text("dX = ${Swerve.linearMomentum.x.round(2)}", 50F, 475F)
-            text("dY = ${-Swerve.linearMomentum.y.round(2)}", 50F, 525F)
-            text("dθ = ${Swerve.angularMomentum.round(2)}", 50F, 575F)
+            text("dX = ${Swerve.linearVelocity.x.round(2)}", 50F, 475F)
+            text("dY = ${-Swerve.linearVelocity.y.round(2)}", 50F, 525F)
+            text("dθ = ${Swerve.angularVelocity.round(2)}", 50F, 575F)
 
             textSize(15F)
             text("fps = ${frameRate.toInt()}", 50F, 750F)

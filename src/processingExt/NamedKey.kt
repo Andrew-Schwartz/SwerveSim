@@ -21,6 +21,7 @@ enum class NamedKey(val key: Int) {
     A(65),
     C(67),
     D(68),
+    G(71),
     X(88),
     Z(90);
 

@@ -6,6 +6,17 @@ fun Double.negateIf(predicate: (Double) -> Boolean): Double = this * if (predica
 
 fun Double.bound(max: Double): Double = max.absoluteValue.let { max(-it, min(it, this)) }
 
+fun Double.bound(min: Double, max: Double): Double = max(min, min(max, this))
+
+fun Double.bound(min: Number, max: Number): Double = max(min.toDouble(), min(max.toDouble(), this))
+
+fun boundAngleDegrees(degrees: Double): Double {
+    var d = degrees
+    while (d > 180) d -= 180
+    while (d <= -180) d += 180
+    return d
+}
+
 infix fun Double.epsilonEquals(other: Double): Boolean = abs(this - other) < 1E-12
 
 fun Double.sqrt(): Double = sqrt(this)

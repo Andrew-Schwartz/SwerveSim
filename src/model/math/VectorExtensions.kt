@@ -21,3 +21,4 @@ inline fun Vector.either(other: Vector, predicate: (Double, other: Double) -> Bo
     predicate(x, other.x) || predicate(y, other.y)
 
 fun Iterable<Vector>.sum(): Vector = reduce(Vector::plus)
+fun Iterable<Vector>.average(): Vector = sum() / count().toDouble()

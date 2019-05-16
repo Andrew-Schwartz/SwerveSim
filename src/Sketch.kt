@@ -5,14 +5,16 @@ import processing.event.KeyEvent
 import processingExt.NamedKey.Companion.named
 
 object Sketch : PApplet() {
-    const val w = 1600
-    const val h = 800
+    const val w = 1600.0
+    const val h = 800.0
 
     override fun settings() {
-        size(w, h)
+        size(w.toInt(), h.toInt())
     }
 
     override fun draw() {
+//        frameRate(10F)
+
         background(255)
         HUD.draw(this)
         Swerve.updateModules()
@@ -27,4 +29,6 @@ object Sketch : PApplet() {
     override fun keyReleased(event: KeyEvent) {
         Input -= event.named()
     }
+
+
 }

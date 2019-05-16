@@ -3,15 +3,15 @@ package model.swerve
 import Input
 import Sketch
 import hud.HUD
-import model.math.Vector
-import model.math.drawable
-import model.math.epsilonEquals
-import model.math.sum
+import model.math.*
+import model.math.Vector.Companion.iHat
 import model.swerve.SwerveModule.Companion.maxOutput
 import processing.core.PApplet
 import processingExt.Drawable
 import processingExt.line
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.atan2
+import kotlin.math.hypot
 
 object Swerve : Drawable {
     var x = 1000.0
@@ -27,8 +27,8 @@ object Swerve : Drawable {
 
     var heading: Double = 0.0
 
-    var linearMomentum = Vector(0, 0)
-    var angularMomentum = 0.0
+    var linearVelocity = Vector(0, 0)
+    var angularVelocity = 0.0
 
     private val moduleOffsets: List<Vector>
         get() = listOf(
@@ -49,7 +49,7 @@ object Swerve : Drawable {
             module.y = y + moduleOffsets[i].y
             module.draw(applet)
         }
-        linearMomentum.times(20.0 / maxOutput).drawable(center).draw(applet)
+        linearVelocity.times(20.0 / maxOutput).drawable(center).draw(applet)
         with(applet) {
             noFill()
             stroke(0)
@@ -95,46 +95,36 @@ object Swerve : Drawable {
 
         val moving = !ws.all { it epsilonEquals 0.0 }
 
-//        println("wa: $wa\t\tws: $ws")
+        for ((i, module) in modules.withIndex())
+            module.set(wa[i], ws[i], moving)
 
-        for ((i, module) in modules.withIndex()) {
-            if (moving) {
-                module.set(wa[i], ws[i])
-            } else {
-                module.set(module.heading - heading, ws[i])
-            }
-        }
+//        println("wa: $wa\t\tws: $ws")
     }
 
     fun move() {
-        val linearForce = modules.map { it.output }.sum()
+        val linearAcceleration = modules.map { it.outputForce }.sum()/* / mass*/
         val angularForce = modules.map {
-            it.output/*.bound(0.5)*/ dot Vector(1.0, 0.0).rotate((it.center - center).angle + 90)
-        }.sum()
+            it.outputForce dot iHat.rotate((it.center - center).angle + 90)
+        }.sum()/* / mass*/
 
-        linearMomentum = linearForce
-        angularMomentum = angularForce
+        linearVelocity += linearAcceleration * dt
+        linearVelocity += modules.map { it.frictionForce(linearVelocity / 4.0) }.sum()
 
-//        linearMomentum = linearForce.map(linearMomentum) { f, m -> m + f / 10.0 }
-        linearMomentum *= 1.0 - modules.map { it.frictionForce(linearMomentum.angle) }.average()
-//        linearMomentum = linearMomentum
+        angularVelocity += angularForce * dt
+        angularVelocity *= 0.97 // TODO actual friction
+//        angularVelocity += modules.map { it.frictionForce(-jHat.rotate((it.center - center).angle)) }.sum().magnitude
 
-//        angularMomentum = if (angularForce epsilonEquals 0.0)
-//            angularMomentum * 0.9
-//        else
-//            angularMomentum + angularForce / 10.0
-//        angularMomentum *= 1.0 - modules.map { it.frictionForce((it.center - center).angle + 90) }.average()
+        center += linearVelocity
+        heading += angularVelocity
 
-        x += linearMomentum.x
-        y += linearMomentum.y
-        heading += angularMomentum
-
-        x = max(HUD.dividerX.toDouble(), min(Sketch.w.toDouble(), x))
-        y = max(0.0, min(Sketch.h.toDouble(), y))
+        x = x.bound(HUD.dividerX, Sketch.w)
+        y = y.bound(0.0, Sketch.h)
     }
 
-    private const val w = 75.0
-    private const val l = 75.0
+    private const val w = 76.0 // cm, ~= 30 in
+    private const val l = 76.0
+    const val mass = 54.4 // kg, ~= 120 lbs
+
     private val wComponent = w / hypot(w, l)
     private val lComponent = l / hypot(w, l)
 }

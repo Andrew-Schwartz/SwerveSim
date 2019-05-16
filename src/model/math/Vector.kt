@@ -6,8 +6,8 @@ import kotlin.math.*
 
 data class Vector(val x: Double, val y: Double) {
     companion object {
-        val i = Vector(1.0, 0.0)
-        val j = Vector(0.0, 1.0)
+        val iHat = Vector(1.0, 0.0)
+        val jHat = Vector(0.0, 1.0)
 
         val ZERO = Vector(0.0, 0.0)
     }
@@ -43,7 +43,6 @@ data class Vector(val x: Double, val y: Double) {
     fun boundEach(max: Double): Vector = map { it.bound(max) }
 
     operator fun plus(other: Vector): Vector = map(other, Double::plus)
-    operator fun plus(each: Double): Vector = map(Vector(each, each), Double::plus)
 
     operator fun unaryMinus(): Vector = map { -it }
 
