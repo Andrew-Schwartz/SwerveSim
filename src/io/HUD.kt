@@ -1,12 +1,14 @@
-package hud
+package io
 
 import Sketch.h
+import model.math.mapY
 import model.math.round
 import model.swerve.Swerve
 import processing.core.PApplet
 import processingExt.Drawable
 import processingExt.NamedKey.*
 import processingExt.rect
+import processingExt.vector
 
 object HUD : Drawable {
     const val dividerX = 400
@@ -26,6 +28,7 @@ object HUD : Drawable {
             noStroke()
             rect(dividerX - 2, 0, 2, h)
             indicators.forEach { it.draw(this) }
+            vector(dividerX / 2.0, 120.0, Input.direction.mapY { -it } * 30.0)
 
             text("X = ${Swerve.x.round(2)}", 50F, 300F)
             text("Y = ${-Swerve.y.round(2)}", 50F, 350F)

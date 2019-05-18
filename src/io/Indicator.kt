@@ -1,6 +1,5 @@
-package hud
+package io
 
-import Input
 import processing.core.PApplet
 import processingExt.*
 

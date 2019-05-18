@@ -1,10 +1,13 @@
 package model.swerve
 
-import Input
 import Sketch
-import hud.HUD
-import model.math.*
-import model.math.Vector.Companion.iHat
+import io.HUD
+import io.Input
+import model.math.Vector
+import model.math.Vector.Companion.jHat
+import model.math.bound
+import model.math.epsilonEquals
+import model.math.sum
 import model.swerve.SwerveModule.Companion.maxOutput
 import processing.core.PApplet
 import processingExt.Drawable
@@ -49,8 +52,8 @@ object Swerve : Drawable {
             module.y = y + moduleOffsets[i].y
             module.draw(applet)
         }
-        linearVelocity.times(20.0 / maxOutput).drawable(center).draw(applet)
         with(applet) {
+            //            vector(x, y, linearVelocity * 10.0 / maxOutput)
             noFill()
             stroke(0)
             strokeWeight(2F)
@@ -97,14 +100,12 @@ object Swerve : Drawable {
 
         for ((i, module) in modules.withIndex())
             module.set(wa[i], ws[i], moving)
-
-//        println("wa: $wa\t\tws: $ws")
     }
 
     fun move() {
         val linearAcceleration = modules.map { it.outputForce }.sum()/* / mass*/
         val angularForce = modules.map {
-            it.outputForce dot iHat.rotate((it.center - center).angle + 90)
+            it.outputForce dot jHat.rotate((it.center - center).angle)
         }.sum()/* / mass*/
 
         linearVelocity += linearAcceleration * dt
@@ -112,7 +113,9 @@ object Swerve : Drawable {
 
         angularVelocity += angularForce * dt
         angularVelocity *= 0.97 // TODO actual friction
-//        angularVelocity += modules.map { it.frictionForce(-jHat.rotate((it.center - center).angle)) }.sum().magnitude
+//        angularVelocity += modules.map {
+//            it.frictionForce(iHat.rotate((it.center - center).angle))
+//        }.sumByDouble { it.magnitude }.also { println(it) }
 
         center += linearVelocity
         heading += angularVelocity

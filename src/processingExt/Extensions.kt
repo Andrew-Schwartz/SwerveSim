@@ -1,5 +1,6 @@
 package processingExt
 
+import model.math.DrawableVector
 import model.math.Vector
 import processing.core.PApplet
 
@@ -27,4 +28,8 @@ fun PApplet.fill(r: Number, g: Number, b: Number) {
 
 fun PApplet.text(s: String, x: Number, y: Number) {
     text(s, x.toFloat(), y.toFloat())
+}
+
+fun PApplet.vector(x: Double, y: Double, v: Vector) {
+    DrawableVector(x, y, v).draw(this)
 }
