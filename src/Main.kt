@@ -1,3 +1,3 @@
-import processingExt.runPApplet
+import libraryExtensions.runPApplet
 
 fun main() = runPApplet<Sketch>()

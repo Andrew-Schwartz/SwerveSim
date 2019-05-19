@@ -1,11 +1,11 @@
 package model.swerve
 
+import libraryExtensions.Drawable
+import libraryExtensions.line
+import libraryExtensions.vector
 import model.math.Vector
 import model.math.Vector.Companion.jHat
 import processing.core.PApplet
-import processingExt.Drawable
-import processingExt.line
-import processingExt.vector
 import kotlin.math.abs
 
 class SwerveModule(var x: Double, var y: Double) : Drawable {

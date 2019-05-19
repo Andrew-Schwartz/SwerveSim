@@ -1,7 +1,8 @@
-package io
+package io.output
 
+import io.input.Input
+import libraryExtensions.*
 import processing.core.PApplet
-import processingExt.*
 
 class Indicator(val display: String, val x: Int, val y: Int, val targetKey: NamedKey) : Drawable {
     private val keyIsPressed: Boolean get() = targetKey in Input.pressedKeys

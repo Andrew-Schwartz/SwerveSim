@@ -1,22 +1,21 @@
-package io
+package io.input
 
+import libraryExtensions.NamedKey
 import model.math.Vector
-import model.math.sum
-import processingExt.NamedKey
 
 object Input {
     val pressedKeys: MutableSet<NamedKey> = mutableSetOf()
-    val controllers: MutableSet<Controller> = mutableSetOf()
+    lateinit var controller: LogitechController
 
     val rotationSpeed: Double
         get() = pressedKeys.map { it.rotationValue }.sum() +
-                controllers.map { it.rightBumper - it.leftBumper }.sum()
+                controller.rightTrigger - controller.leftTrigger
 
     val direction: Vector
         get() = Vector(
             pressedKeys.map { it.xValue }.sum(),
             pressedKeys.map { it.yValue }.sum()
-        ) + controllers.map { it.leftStick }.sum()
+        ) + controller.leftStick
 
     operator fun plusAssign(key: NamedKey) {
         pressedKeys += key
@@ -27,7 +26,7 @@ object Input {
     }
 
     fun readControllers() {
-        for (controller in controllers) controller.poll()
+        controller.poll()
     }
 
     private val NamedKey.rotationValue: Double

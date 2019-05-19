@@ -16,7 +16,7 @@ data class Vector(val x: Double, val y: Double) {
     constructor(coords: List<Number>) : this(coords[0], coords[1])
     constructor(coords: Pair<Number, Number>) : this(coords.first, coords.second)
 
-    val magnitude: Double get() = sqrt(x * x + y * y)
+    val magnitude: Double get() = hypot(x, y)
     operator fun component3() = magnitude
 
     /**
@@ -35,7 +35,7 @@ data class Vector(val x: Double, val y: Double) {
 
     fun rotateAround(center: Vector, degrees: Double): Vector {
         val zeroed = Vector(this.x - center.x, this.y - center.y)
-        return Vector(center.x, center.y) + zeroed.rotate(degrees)
+        return center + zeroed.rotate(degrees)
     }
 
     fun bound(max: Double): Vector = abs(max).let { if (abs(magnitude) > max) normalize(max) else this }
@@ -49,10 +49,8 @@ data class Vector(val x: Double, val y: Double) {
     operator fun minus(other: Vector): Vector = map(other, Double::minus)
 
     operator fun times(scalar: Double): Vector = map { it * scalar }
-//    operator fun times(each: Vector): Vector = map(each, Double::times)
 
     operator fun div(scalar: Double): Vector = map { it / scalar }
-//    operator fun div(each: Vector): Vector = map(each, Double::div)
 
     infix fun dot(other: Vector): Double = x * other.x + y * other.y
 }

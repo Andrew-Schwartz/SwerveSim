@@ -1,4 +1,4 @@
-package processingExt
+package libraryExtensions
 
 import processing.event.KeyEvent
 
@@ -31,7 +31,6 @@ enum class NamedKey(val key: Int) {
         } catch (e: NoSuchElementException) {
             println(keyCode)
             ENTER
-//            exitProcess(keyCode)
         }
     }
 }

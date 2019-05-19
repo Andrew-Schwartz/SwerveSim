@@ -1,8 +1,5 @@
 package model.math
 
-fun Vector.drawable(center: Vector): DrawableVector = DrawableVector(center, this)
-fun Vector.drawable(x: Double, y: Double): DrawableVector = drawable(Vector(x, y))
-
 // Functional extensions
 inline fun Vector.map(transform: (Double) -> Double) = Vector(transform(x), transform(y))
 

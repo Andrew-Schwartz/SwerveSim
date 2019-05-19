@@ -1,14 +1,16 @@
-package io
+package io.output
 
 import Sketch.h
+import io.input.Input
+import libraryExtensions.Drawable
+import libraryExtensions.NamedKey.*
+import libraryExtensions.rect
+import libraryExtensions.vector
 import model.math.mapY
 import model.math.round
 import model.swerve.Swerve
+import model.swerve.dt
 import processing.core.PApplet
-import processingExt.Drawable
-import processingExt.NamedKey.*
-import processingExt.rect
-import processingExt.vector
 
 object HUD : Drawable {
     const val dividerX = 400
@@ -32,11 +34,11 @@ object HUD : Drawable {
 
             text("X = ${Swerve.x.round(2)}", 50F, 300F)
             text("Y = ${-Swerve.y.round(2)}", 50F, 350F)
-            text("θ = ${Swerve.heading.round(2)}", 50F, 400F)
+            text("θ = ${(Swerve.heading % 360).round(2)}", 50F, 400F)
 
-            text("dX = ${Swerve.linearVelocity.x.round(2)}", 50F, 475F)
-            text("dY = ${-Swerve.linearVelocity.y.round(2)}", 50F, 525F)
-            text("dθ = ${Swerve.angularVelocity.round(2)}", 50F, 575F)
+            text("dX = ${(Swerve.linearVelocity.x / dt).round(2)}", 50F, 475F)
+            text("dY = ${(-Swerve.linearVelocity.y / dt).round(2)}", 50F, 525F)
+            text("dθ = ${(Swerve.angularVelocity / dt).round(2)}", 50F, 575F)
 
             textSize(15F)
             text("fps = ${frameRate.toInt()}", 50F, 750F)

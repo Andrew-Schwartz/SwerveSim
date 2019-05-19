@@ -1,12 +1,12 @@
-import io.Controller
-import io.HUD
-import io.Input
+import io.input.Input
+import io.input.LogitechController
+import io.output.HUD
+import libraryExtensions.NamedKey.Companion.named
 import model.swerve.Swerve
 import org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1
 import org.lwjgl.glfw.GLFW.glfwInit
 import processing.core.PApplet
 import processing.event.KeyEvent
-import processingExt.NamedKey.Companion.named
 
 object Sketch : PApplet() {
     const val w = 1600.0
@@ -17,7 +17,7 @@ object Sketch : PApplet() {
             throw IllegalStateException("Unable to initialize GLFW")
 
         size(w.toInt(), h.toInt())
-        Input.controllers += Controller(GLFW_JOYSTICK_1)
+        Input.controller = LogitechController(GLFW_JOYSTICK_1)
     }
 
     override fun draw() {
@@ -25,7 +25,7 @@ object Sketch : PApplet() {
         background(255)
         Input.readControllers()
         HUD.draw(this)
-        Swerve.updateModules()
+        Swerve.calculateModules()
         Swerve.move()
         Swerve.draw(this)
     }

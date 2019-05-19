@@ -1,8 +1,10 @@
 package model.swerve
 
 import Sketch
-import io.HUD
-import io.Input
+import io.input.Input
+import io.output.HUD
+import libraryExtensions.Drawable
+import libraryExtensions.line
 import model.math.Vector
 import model.math.Vector.Companion.jHat
 import model.math.bound
@@ -10,8 +12,6 @@ import model.math.epsilonEquals
 import model.math.sum
 import model.swerve.SwerveModule.Companion.maxOutput
 import processing.core.PApplet
-import processingExt.Drawable
-import processingExt.line
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -25,8 +25,6 @@ object Swerve : Drawable {
             x = value.x
             y = value.y
         }
-
-    var fieldCentric = true
 
     var heading: Double = 0.0
 
@@ -55,20 +53,23 @@ object Swerve : Drawable {
         with(applet) {
             //            vector(x, y, linearVelocity * 10.0 / maxOutput)
             noFill()
-            stroke(0)
             strokeWeight(2F)
+            stroke(255F, 150F, 0F)
             line(modules[0].center, modules[1].center)
+            stroke(0F, 0F, 0F)
             line(modules[1].center, modules[2].center)
             line(modules[2].center, modules[3].center)
             line(modules[3].center, modules[0].center)
         }
     }
 
-    fun updateModules() {
-        val (strafe, forward) = if (fieldCentric)
+    fun calculateModules() {
+        val (strafe, forward) = if (!Input.controller.xButton)
             Input.direction.rotate(heading)
         else
             Input.direction
+
+        println(Input.rotationSpeed)
 
         // geometric stuff
         val a = strafe - Input.rotationSpeed * lComponent
@@ -112,7 +113,9 @@ object Swerve : Drawable {
         linearVelocity += modules.map { it.frictionForce(linearVelocity / 4.0) }.sum()
 
         angularVelocity += angularForce * dt
-        angularVelocity *= 0.97 // TODO actual friction
+
+        angularVelocity *= if (Input.rotationSpeed == 0.0) 0.8 else 0.9845 // TODO actual friction
+
 //        angularVelocity += modules.map {
 //            it.frictionForce(iHat.rotate((it.center - center).angle))
 //        }.sumByDouble { it.magnitude }.also { println(it) }

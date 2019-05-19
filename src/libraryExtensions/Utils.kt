@@ -1,4 +1,4 @@
-package processingExt
+package libraryExtensions
 
 import processing.core.PApplet
 
