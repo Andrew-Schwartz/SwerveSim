@@ -2,9 +2,9 @@ package model.math
 
 import kotlin.math.*
 
-fun Double.negateIf(predicate: (Double) -> Boolean): Double = this * if (predicate(this)) -1 else 1
+inline fun Double.negateIf(predicate: (Double) -> Boolean): Double = this * if (predicate(this)) -1 else 1
 
-fun Double.bound(max: Double): Double = max.absoluteValue.let { max(-it, min(it, this)) }
+fun Double.bound(max: Double): Double = abs(max).let { this.bound(-it, it) }
 
 fun Double.bound(min: Double, max: Double): Double = max(min, min(max, this))
 

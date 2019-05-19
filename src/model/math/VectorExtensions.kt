@@ -1,5 +1,7 @@
 package model.math
 
+fun det(a: Vector, b: Vector) = a.x * b.y - a.y * b.x
+
 // Functional extensions
 inline fun Vector.map(transform: (Double) -> Double) = Vector(transform(x), transform(y))
 
