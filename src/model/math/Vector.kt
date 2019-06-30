@@ -38,9 +38,9 @@ data class Vector(val x: Double, val y: Double) {
         return center + zeroed.rotate(degrees)
     }
 
-    fun bound(max: Double): Vector = abs(max).let { if (abs(magnitude) > max) normalize(max) else this }
+    infix fun bound(max: Double): Vector = abs(max).let { if (abs(magnitude) > max) normalize(max) else this }
 
-    fun boundEach(max: Double): Vector = map { it.bound(max) }
+    infix fun boundEach(max: Double): Vector = map { it bound max }
 
     operator fun plus(other: Vector): Vector = map(other, Double::plus)
 
